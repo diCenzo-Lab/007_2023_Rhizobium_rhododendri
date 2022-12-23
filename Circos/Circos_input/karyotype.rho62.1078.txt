@@ -1,0 +1,11 @@
+chr - hs1 1 0 3709686 chr1
+chr - hs4 2 0 336962 chr2
+chr - hs2 3 0 1530638 chr3
+chr - hs3 4 0 381845 chr4
+chr - hs8 5 0 439071 chr5
+chr - hs9 6 0 834411 chr6
+chr - hs7 7 0 432998 chr7
+chr - hs5 8 0 302267 chr8
+chr - hs6 9 0 304572 chr9
+chr - hs10 10 0 3664408 chr10
+
