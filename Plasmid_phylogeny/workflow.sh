@@ -71,8 +71,36 @@ fasttree Alignments/ParBc_trimal.faa > OutputFiles/ParBc_fasttree.tre # phylogen
 fasttree Alignments/Rep_3_trimal.faa > OutputFiles/Rep_3_fasttree.tre # phylogeny of Rep
 
 # Make RAxML phylogeny
+grep '>' ProteomesHMM/* | cut -f2 -d':' > intermediaryFiles/newNames.txt # get names of proteins
+grep '>' repliconProteomes/* | cut -f4 -d':' | cut -f4,1,7 -d'|' | sed 's/.gbk//' | sed 's/|/__/' | sed 's/^/>/' > intermediaryFiles/oldNames.txt # get names of replicons
+paste intermediaryFiles/oldNames.txt intermediaryFiles/newNames.txt > intermediaryFiles/allNames.txt # combine the name files
+grep '>' Alignments/ParA_trimal.faa > intermediaryFiles/ParA_names.txt # get names of ParA proteins
+grep -w -f intermediaryFiles/ParA_names.txt intermediaryFiles/allNames.txt > intermediaryFiles/names_to_replace.txt # get just names for proteins to replace
+cp Alignments/ParA_trimal.faa intermediaryFiles/ParA_trimal.txt # get the input alignment
+cp Scripts/replaceNames.m .
+matlab -nodisplay -nosplash -nodesktop -r "replaceNames"
+rm replaceNames.m
+cp intermediaryFiles/ParA_trimal_renamed.txt RAxML/ParA_trimal.faa
 cd RAxML # change directory
-cp ../Alignments/ParA_trimal.faa . # get the input alignment
+sed -i 's/)//' ParA_trimal.faa
+sed -i 's/(/__/' ParA_trimal.faa
+sed -i 's/AIPMFIIK_2/Chromid_1/' ParA_trimal.faa
+sed -i 's/AIPMFIIK_3/pTi6.2/' ParA_trimal.faa
+sed -i 's/AIPMFIIK_4/Chromid_2/' ParA_trimal.faa
+sed -i 's/AIPMFIIK_1/Chromosome/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_6/Chromid_3/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_5/Chromid_2/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_1/Chromosome/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_4/Chromid_1/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_2/pRt1078/' ParA_trimal.faa
+sed -i 's/AMNMKMEP_3/pTi1078/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_2/pRt932/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_3/pTi932/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_4/Chromid_1/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_1/Chromosome/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_6/Chromid_3/' ParA_trimal.faa
+sed -i 's/ILJPBDBJ_5/Chromid_2/' ParA_trimal.faa
+sed -i 's/ //g' ParA_trimal.faa
 raxmlHPC-HYBRID-AVX2 -T 10 -s ParA_trimal.faa -N 5 -n test_phylogeny -f a -p 12345 -x 12345 -m PROTGAMMAAUTO # figure out which model to use
 mpiexec --map-by node -np 5 raxmlHPC-HYBRID-AVX2 -T 6 -s ParA_trimal.faa -N autoMRE -n ParA_phylogeny -f a -p 12345 -x 12345 -m PROTGAMMALGF # make ML phylogeny
 cd .. # change directory
